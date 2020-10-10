@@ -15,3 +15,4 @@ node .
 ```
 8. visit localhost:3000 on google chrome
 9. use ctrl + c in terminal or cmd to kill the web server
+10. add a public folder to store all static contents
