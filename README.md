@@ -9,7 +9,7 @@
 npm install express --save
 ```
 6. add index.js file as the entry point
-7. run nodex . or node index.js to start up the web server.
+7. run node . or node index.js to start up the web server.
 ```js
 node .
 ```
