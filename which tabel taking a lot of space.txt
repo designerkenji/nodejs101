@@ -1,0 +1,147 @@
+which tabel taking a lot of space?
+
+select t.NAME as TableName,
+s.Name as SchemaName,
+p.rows as RowCounts
+sum(a.total_pages)*8 as TotalSpaceKB,
+CAST(ROUND(((sum(a.total_Pages)*8)/1024.00),2) as Numeric(36,2)) AS TotalSpaceMB,
+sum(a.used_pages)*8 as UsedSpaceKB,
+CAST(ROUND(((sum(a.used_pages)*8)/1024.00),2) as Numeric(36,2)) AS UsedSpaceMB,
+(sum(a.total_pages)-sum(a.used_paged))*8 as UnusedSpaceKB,
+CAST(ROUND(((sum(a.total_pages)-sum(a.used_paged))*8)/1024.00),2) as Numeric(36,2)) AS UnusedSpaceMB
+
+FROM 
+sys.tables t
+
+INNER JOIN
+
+sys.indexes i ON t.OBJECT_ID = i.OBJECT_ID
+
+INNER JOIN
+
+sys.partitions p ON i.OBJECT_ID=p.OBJECT_ID and i.index_id=p.index_ID
+
+INNER JOIN
+
+sys.allocation_units a ON p.partition_ID = a.container_ID
+
+LEFT OUTER JOIN
+
+sys.schemas s ON t.schema_id = s.schema_id
+
+WHERE
+t.NAME not like 'dt%'
+and t.is_ms_shipped=0
+and i.object_ID>255
+
+GROUP BY
+t.Name, s.Name, p.Rows
+
+Order by
+sum(a.total_pages)*8 desc
+
+
+lanid2emailController
+
+Get(string id)
+{
+DirectoryEntry entry = new DirectoryEntry("LDAP://server");
+DirectorySearcher dSearch = new DirectorySearcher(entry);
+String Name = id;
+dSearch.Filter = "(&(samaccountname=" + Name + "))";
+
+System.Diagnostics.Debug.WriteLine("works");
+
+System.Diagnostics.Debug.WriteLine(dSearch.FindAll().Count.ToString());
+foreach (SearchResult sResultSet in dSearch.FindAll())
+{
+landid = string.Concat((GetProperty(sResultSet, "mail")), "," landid);
+}
+
+return lanid;
+
+}
+
+if (!requre("pacman")) install.packages("pacman")
+
+pacman::p_load("openxlsx","haven","readr","scales","safer",
+"odbc",
+"data.table",
+"MASS","statmod","VGAM","evir",
+"parallel",
+"igraph","stringdist",
+"httr",
+"gtools","ggplot2","matrixStats",
+"actuar",
+"lubridate","stringr",
+"cowplot","tidyr",
+"dplyr","rstan","rstanarm","shinystan", "shiny","shinydashboard","DT","readxl"
+)
+
+rstan_options(auto_write = TRUE)
+options(mc.cores = parallel::detectCores())
+
+TIME_STAMP_tmp = Sys.time()
+
+filteredData = filter(df,
+POLICY_YR>2007,
+TRANS_D<DT_CUTOFF)
+
+df2 = df1 %>%
+mutate(
+newcol = if_else(is.na(unsured),"zzzNA", unsured),
+) %>%
+group_by(
+col1,col2
+) %>% 
+summarise(
+col1sum = sum(col1),
+insured = names(which.max(table(insured)))
+)
+
+df1$col1 = quarter(df1$col2_dt %m+% months(1))
+
+rm(df1)
+gc()
+
+Sys.time() - TIME_STAMP_tmp
+
+
+
+df1 = df2[order(col1,col2),]
+
+df1 = df2[!duplicated(df2),]
+
+df1 = df2%>%select(-coltotakeaway)
+
+df1 = as.data.table(df2)
+df2 = left_join(df_left, df_right,
+by=c("col1","col2"))
+
+nrow(df1) -  nrow(df2)
+
+mutate(
+col1 = ifelse(col2==0,1,0),
+col2 = ifelse(col3==1,col2, NA)
+
+save(df, file="path")
+
+
+library(tidyverse)
+library(dplyr)
+library(odbc)
+
+DT_RUN = Sys.Date()
+DT_BEG = paste0("'", year(DT_RUN)-21,"-12-01'")
+BT_END = paste0("'",DT_RUN,"'")
+PY_LIST = seq(year(DT_RUN)-20,year(DT_RUN))
+
+#DT_BEG = "'2006-12-01'"
+#DT_END = "'2019-12-31'"
+
+WD_PATH = paste0("//server/", year(DT_RUN)*100+month(DR_RUN))
+dir.create(WD_PATH)
+setwd(WD_PATH)
+getwd()
+
+https://aka.ms/FabConWorkshop
