@@ -641,3 +641,16 @@ function refresh_WC_batchlist_data_dictionary_grid(data) {
 	}
 	
 }
+
+
+
+<script id="some-template" type="text/template">
+
+<tr>
+<td style="text-align: left; width:150px;"><b>BUCKET</b></td>
+
+{{=FIELD_NM}}
+</tr>
+
+</script>
+
