@@ -752,3 +752,44 @@ UNION ALL
 
 
 
+SELECT top 20 FILTER_ITEM_ID
+,FILTER_FIELD_VALUE_COUNT 
+,FILTER_FIELD_DISPLAY_NM
+,FILTER_FIELD_NM
+,FILTER_FIELD_VALUE 
+,CASE WHEN FILTER_FIELD_VALUE is null then '' else FILTER_FIELD_VALUE end 
++' [FIELD_NM].['+FILTER_FIELD_NM+']' as FILTER_FIELD_VALUE2
+,FILTER_PARENT_FIELD_VALUE 
+
+FROM F_ITEM_LK
+
+WHERE FILTER_FIELD_NM +' ' FILTER_FIELD_DISPLAY_NM+' '+ FILTER_FIELD_VALUE 
++' '+
+replace(
+replace(
+replace(FILTER_FIELD_VALUE, '.', '')
+,'-','')
+,'''','')
++' ' +
+replace(
+replace(
+replace(
+replace(FILTER_FIELD_VALUE,'.','')
+,'-','')
+,'''','')
+,' ','')
++' '+FILTER_FIELD_DISPLAY_NM 
+like '%'+@search_for+'%'
+order by FILTER_FIELD_VALUE_COUNT, FILTER_FIELD_NM,FILTER_FIELD_VALUE 
+
+
+SET @ENDPATINDEX=PATINDEX('%[^a-z]visited[^a-z]%', @USER_INPUT_DS)
+
+IF @ENDPATINDEX=0
+begin 
+	set @ENDPATINDEX=99999
+end 
+SET @ENTITY_NM = ltrim(rtrim(substring(@USER_INPUT_DS, @PATINDEX+len(' how many people in '), @ENDPATINDEX)))
+
+
+
