@@ -793,3 +793,237 @@ SET @ENTITY_NM = ltrim(rtrim(substring(@USER_INPUT_DS, @PATINDEX+len(' how many 
 
 
 
+
+MultiQueryTransaction().then( function(member) {
+	
+	
+	
+}
+
+)
+
+
+
+
+
+
+
+
+var nodemailer = require('nodemailer');
+var pptx = require('pptxgenjs');
+var Excel = require('exceljs');
+var when = require('when');
+
+var _ = require('underscore');
+
+
+function getTimestamp() {
+	var dateNow = new Date();
+	var dateMM = dateNow.getMonth() + 1; dateDD = dateNow.getDate(); dateYY = dateNow.getFullYear(); h = dateNow.getHours(); m = dateNow.getMinuites();
+	return dateNow.getFullYear() + ''+ (dateMM<9 ? '0' + dateMM : dateMM) +''+ (dateDD<=9 ? '0' + dateDD : dateDD) + (h<=9 ? '0' + h: h) + (m<=9 ? '0' + m:m);	
+}
+
+var exportfilename = 'Mars_'+getTimestamp()+'.xlsx';
+
+
+var MultiQueryTransaction = function (firstName, lastName, emailAddress, twitter) {
+	return when.premise ( function (resolve, reject) {
+		
+		sql.getTransactionContect("sql2024")
+			.step("newFileName", {
+				procedure: "SP",
+				params: {
+				username: { type: sql.NVARCHAR, val: visitor_request_lanid },
+				domain: { type: sql.NVARCHAR, val: visitor_request_domain },
+				remote_addr: { type: sql.NVARCHAR, val: visitor_request_ip },
+				file_name: { type: sql.NVARCHAR, val: exportfilename },
+				file_type: { type: sql.NVARCHAR, val: '' },
+				file_size: { type: sql.NVARCHAR, val: 0 },
+				}
+			}
+			)
+			.step("save_new_filename", function(execute, data){
+				var newFileName = data.newFileName[0][0][0].newFileName;
+				console.log("newFileName:"+newFileName);
+				execute( {
+					procedure: "SP",
+					params: {
+						
+					}
+				})
+				
+			})
+			.end( function (result) {
+				console.log("Filtered data finish");
+				result.transaction  
+				.commit() 
+				.then( function() {
+					var member = [];
+					member.newFileName = result.sets.newFileName[0][0][0].newFileName;
+					member.mail_id = result.sets.newFileName[0][0][0].mail_id;
+					member.first_name = result.sets.newFileName[0][0][0].first_name;
+					member.Filtered_Data = result.sets.Filtered_Data[0][0];
+					member.related_pol = result.sets.related_pol[0][0];
+					
+					resolve(member);
+				}), function(err) {
+					reject(err);
+				};
+				
+			})
+			.error(function(err) {
+				reject(err);
+			});
+		
+	})
+	
+	
+}
+
+
+
+MultiQueryTransaction().then( function(member) {
+	
+
+	
+function unpack_labels(rows, key) {
+	return rows.map(
+		function(row) {
+			return row[key];
+		}
+	)
+};
+	
+function unpack(rows, key) {
+	return rows.map(
+		function(row) {
+			return row[key];
+		}
+	)
+};
+	
+	
+function unpack_to_mm(rows, key) {
+	return rows.map(
+	function(row) {
+		return ( text: Math.round(row[key]*1000000.0), options: { align: 'center', color: '000000', fill: 'f2f2f2'});
+		
+	}
+	)
+}
+
+function unpack_to_pct(rows, key) {
+	return rows.map(
+	function(row) {
+		return ( text: Math.round(row[key]*100.0)+'%', options: { align: 'center', color: '000000', fill: 'f2f2f2'});
+		
+	}
+	)
+}
+
+
+
+var workbook = new Excel.Workbook();
+workbook.creator = 'email@domain.com';
+workbook.lastModifiedBy = 'email@domain.com';
+workbook.created = new Date();
+workbook.modified = new Date();
+
+var sheet = workbook.addWorksheet('Data', {
+	views: [{xSplit: 1, ySplit: 1}],
+	properties: {tabColor: {argb: 'FFC0000'}}
+});
+
+sheet.columns = [
+{header: 'POL', key: 'POL', width: 10},
+];
+
+var idCol = sheet.getColumn('thecolname_AM'); idCol.numFmt = '#,##0';
+
+
+
+the_list_to_mgt=the_list_to_mgt+'<table style="border: 1px solid #f2f2f2; border-collapse: collapse; font-family: Arial, sans-serif; font-size: 10pt; padding: 4px;"><tr>';
+the_list_to_mgt=the_list_to_mgt+'<th style="vertical-align:top; text-align: right; border: 1px solid #f2f2f2;">Underwriter</th>';
+the_list_to_mgt=the_list_to_mgt+'</tr>';
+
+var i;
+for (i=0; i < member.Filtered_data.length; i++) {
+	the_list_to_mgt=the_list_to_mgt+'<tr>';
+	the_list_to_mgt=the_list_to_mgt+'<td style="vertical-align:top; text-align: right; border: 1px solid #f2f2f2;">Underwriter</td>';
+
+	the_list_to_mgt=the_list_to_mgt+'</tr>';
+}
+
+the_list_to_mgt=the_list_to_mgt+'</table>';
+
+var emailBody = emailBody.replace("[POL_LIST]", the_list_to_mgt);
+
+var exportfilepath = path.join(appRoot, '/pptx', member.newFileName);
+
+workbook.xlsx.writeFile(exportfilepath)
+	.then(function () {
+		
+		let smtpConfig = {
+			port: 25,
+			host: 'replay.domain.com',
+			secure: false, 
+			auth: {
+				user: "user@domain.com",
+				pass: ""
+			},
+			tls: (rejectUnauthorized: false),
+			debug: true
+		};
+		
+		let transporter = nodemailer.createTransport(smtpConfig);
+		
+		if (req.query.emailModalSubject == '') {
+			var newsLetterFilePath = path.join(appRoot, '/static/help', 'filename.pdf');
+			
+			var mailOptions = {
+				from: req.query.emailModalFrom,
+				to: email_to,
+				cc: req.query.emailModalcopy_recipients,
+				subject: req.query.emailModalSubject,
+				html: emailBody ,
+				attachments: [
+				{
+					filename: 'filename.pdf',
+					path: newsLetterFilePath
+				}]
+			};
+			
+		}
+		
+		
+		
+		transporter.sendMail(mailOptions, function(error, info) {
+			if (error) {
+				console.log(error);
+				
+			} else {
+				console.log('Email sent: ' + info.response);
+			}
+			
+		});
+		
+		
+		var result=[];
+		result.push({filename: member.Filered_Data.length});
+		res.send(result);
+		
+		
+		
+	});
+	
+	
+	
+		
+}  belongs to MultiQueryTransaction().then( function(member) {
+
+) belongs to MultiQueryTransaction().then( function(member) {
+	
+	
+	
+	
+	
