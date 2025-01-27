@@ -1,0 +1,20 @@
+copilot prompts for search with authcomplete
+
+use html5 to create a UI with a search input that has autocomplete
+
+add the ability to use up and down key on the keyboard to select the search result
+
+apply Bootstrap to the ui
+
+apply bootstrap to the autocomplete-items as well
+
+add a x icon to clear the input box when user click on it
+
+put the whole search input inside a modal. add a button label openModal to show the modal.
+
+move all the javascripts into an object called "KTSearch"
+update code where all the JavaScript logic is encapsulated inside an object called KTSearch
+
+find items using contains instead of starts with
+
+the enter key should pick the first search result

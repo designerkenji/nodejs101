@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autocomplete Search Input</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <style>
+        .autocomplete-items {
+            position: absolute;
+            z-index: 99;
+            width: 100%;
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+        .autocomplete-item {
+            padding: 10px;
+            cursor: pointer;
+        }
+        .autocomplete-item:hover, .autocomplete-active {
+            background-color: #e9e9e9;
+        }
+    </style>
+</head>
+<body class="d-flex justify-content-center align-items-center vh-100">
+    <button type="button" class="btn btn-primary" onclick="KTSearch.openModal()">Open Modal</button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="searchModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="searchModalLabel">Search</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="input-group">
+                        <input type="text" id="search" class="form-control" placeholder="Search...">
+                        <div class="input-group-append">
+                            <span class="input-group-text clear-icon bi bi-x" onclick="KTSearch.clearInput()" style="cursor: pointer; opacity: 0;"></span>
+                        </div>
+                    </div>
+                    <ul class="autocomplete-items list-group" id="autocomplete-list"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        const KTSearch = {
+            searchInput: document.getElementById('search'),
+            autocompleteList: document.getElementById('autocomplete-list'),
+            currentFocus: -1,
+            suggestions: ['Apple', 'Banana', 'Cherry', 'Date', 'Elderberry', 'Fig', 'Grape'],
+
+            init: function() {
+                this.searchInput.addEventListener('input', this.handleInput.bind(this));
+                this.searchInput.addEventListener('keydown', this.handleKeydown.bind(this));
+                document.addEventListener('click', this.handleClickOutside.bind(this));
+            },
+
+            handleInput: function() {
+                const inputValue = this.searchInput.value;
+                this.autocompleteList.innerHTML = '';
+
+                const clearIcon = document.querySelector('.clear-icon');
+                clearIcon.style.opacity = inputValue ? '1' : '0';
+
+                if (!inputValue) return false;
+                this.currentFocus = -1;
+
+                this.suggestions.forEach(item => {
+                    if (item.toUpperCase().includes(inputValue.toUpperCase())) {
+                        const listItem = document.createElement('li');
+                        listItem.classList.add('autocomplete-item', 'list-group-item', 'list-group-item-action');
+                        listItem.innerHTML = this.highlightMatch(item, inputValue);
+                        listItem.addEventListener('click', () => this.selectItem(item));
+                        this.autocompleteList.appendChild(listItem);
+                    }
+                });
+            },
+
+            highlightMatch: function(item, query) {
+                const startIndex = item.toUpperCase().indexOf(query.toUpperCase());
+                if (startIndex === -1) return item;
+                const endIndex = startIndex + query.length;
+                return `${item.substr(0, startIndex)}<strong>${item.substr(startIndex, query.length)}</strong>${item.substr(endIndex)}`;
+            },
+
+            handleKeydown: function(e) {
+                const items = this.autocompleteList.getElementsByClassName('autocomplete-item');
+                if (e.keyCode === 40) {
+                    this.currentFocus++;
+                    this.addActive(items);
+                } else if (e.keyCode === 38) {
+                    this.currentFocus--;
+                    this.addActive(items);
+                } else if (e.keyCode === 13) {
+                    e.preventDefault();
+                    if (this.currentFocus > -1) {
+                        items[this.currentFocus].click();
+                    } else if (items[0]) {
+                        items[0].click(); // Pick the first result if none selected
+                    }
+                }
+            },
+
+            handleClickOutside: function(e) {
+                if (e.target !== this.searchInput && e.target !== this.autocompleteList) {
+                    this.autocompleteList.innerHTML = '';
+                }
+            },
+
+            addActive: function(items) {
+                if (!items) return false;
+                this.removeActive(items);
+                if (this.currentFocus >= items.length) this.currentFocus = 0;
+                if (this.currentFocus < 0) this.currentFocus = items.length - 1;
+                items[this.currentFocus].classList.add('autocomplete-active');
+            },
+
+            removeActive: function(items) {
+                for (let i = 0; i < items.length; i++) {
+                    items[i].classList.remove('autocomplete-active');
+                }
+            },
+
+            selectItem: function(item) {
+                this.searchInput.value = item;
+                this.autocompleteList.innerHTML = '';
+                document.querySelector('.clear-icon').style.opacity = '1';
+            },
+
+            clearInput: function() {
+                this.searchInput.value = '';
+                this.autocompleteList.innerHTML = '';
+                document.querySelector('.clear-icon').style.opacity = '0';
+            },
+
+            openModal: function() {
+                $('#searchModal').modal('show');
+            }
+        };
+
+        KTSearch.init();
+    </script>
+</body>
+</html>
