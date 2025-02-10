@@ -18,7 +18,7 @@
         .btn-check + .btn {
             width: 60px; /* Fixed size */
             height: 60px;
-            border-radius: 50%; /* Ensures perfect circle */
+            border-radius: 50%; /* Makes it a perfect circle */
             display: flex;
             align-items: center;
             justify-content: center;
@@ -27,6 +27,7 @@
             text-align: center;
             transition: background-color 0.3s ease-in-out;
             border: 2px solid #007bff; /* Outline to maintain shape */
+            position: relative;
         }
 
         /* Highlight effect for selected item */
@@ -35,7 +36,7 @@
             color: white;
         }
 
-        /* Sliding indicator */
+        /* Sliding indicator (Corrected Alignment) */
         .selection-indicator {
             position: absolute;
             width: 60px;
@@ -44,6 +45,7 @@
             background-color: rgba(0, 123, 255, 0.3);
             transition: transform 0.3s ease-in-out;
             pointer-events: none;
+            z-index: -1; /* Moves behind the buttons */
         }
     </style>
 </head>
@@ -56,7 +58,7 @@
             <!-- Sliding Indicator -->
             <div class="selection-indicator" id="indicator"></div>
 
-            <input type="radio" class="btn-check" name="fruit" id="a" value="A" autocomplete="off">
+            <input type="radio" class="btn-check" name="fruit" id="a" value="A" autocomplete="off" checked>
             <label class="btn btn-outline-primary" for="a">A</label>
 
             <input type="radio" class="btn-check" name="fruit" id="b" value="B" autocomplete="off">
@@ -84,15 +86,26 @@
             const indicator = document.getElementById("indicator");
             const labels = document.querySelectorAll(".btn-group label");
 
+            function moveIndicator(selectedLabel) {
+                const rect = selectedLabel.getBoundingClientRect();
+                const parentRect = selectedLabel.parentElement.getBoundingClientRect();
+
+                // Move the indicator to the selected button
+                indicator.style.transform = `translateX(${rect.left - parentRect.left}px)`;
+            }
+
+            // Initial placement of indicator (set to default checked item)
+            const defaultChecked = document.querySelector(".btn-check:checked");
+            if (defaultChecked) {
+                const defaultLabel = document.querySelector(`label[for="${defaultChecked.id}"]`);
+                moveIndicator(defaultLabel);
+            }
+
+            // Update indicator position when selection changes
             buttons.forEach((button, index) => {
                 button.addEventListener("change", function () {
                     if (button.checked) {
-                        const selectedLabel = labels[index];
-                        const rect = selectedLabel.getBoundingClientRect();
-                        const parentRect = selectedLabel.parentElement.getBoundingClientRect();
-
-                        // Move the indicator to the selected button
-                        indicator.style.transform = `translateX(${rect.left - parentRect.left}px)`;
+                        moveIndicator(labels[index]);
                     }
                 });
             });
