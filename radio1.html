@@ -16,9 +16,9 @@
         }
 
         .btn-check + .btn {
-            width: 60px;
+            width: 60px; /* Fixed size */
             height: 60px;
-            border-radius: 50%;
+            border-radius: 50%; /* Ensures perfect circle */
             display: flex;
             align-items: center;
             justify-content: center;
@@ -26,15 +26,22 @@
             padding: 0;
             text-align: center;
             transition: background-color 0.3s ease-in-out;
+            border: 2px solid #007bff; /* Outline to maintain shape */
         }
 
-        /* Indicator for sliding effect */
+        /* Highlight effect for selected item */
+        .btn-check:checked + .btn {
+            background-color: #007bff;
+            color: white;
+        }
+
+        /* Sliding indicator */
         .selection-indicator {
             position: absolute;
             width: 60px;
             height: 60px;
             border-radius: 50%;
-            background-color: rgba(0, 123, 255, 0.3); /* Light blue highlight */
+            background-color: rgba(0, 123, 255, 0.3);
             transition: transform 0.3s ease-in-out;
             pointer-events: none;
         }
@@ -46,7 +53,7 @@
     
     <form>
         <div class="btn-group" id="buttonGroup">
-            <!-- Indicator -->
+            <!-- Sliding Indicator -->
             <div class="selection-indicator" id="indicator"></div>
 
             <input type="radio" class="btn-check" name="fruit" id="a" value="A" autocomplete="off">
